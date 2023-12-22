@@ -1,7 +1,6 @@
-import { PUBLIC_APPWRITE_COL_THREADS_ID, PUBLIC_APPWRITE_DB_MAIN_ID } from '$env/static/public';
 import { databases } from '$lib/appwrite';
 import { Query } from 'appwrite';
-import type { DiscordThread } from './types';
+import type { DiscordMessage, DiscordThread } from './types';
 
 type Ranked<T> = {
     data: T;
@@ -66,8 +65,8 @@ export async function getThreads({ q, tags, allTags }: GetThreadsArgs) {
     tags = tags?.filter(Boolean).map((tag) => tag.toLowerCase()) ?? [];
 
     const data = await databases.listDocuments(
-        PUBLIC_APPWRITE_DB_MAIN_ID,
-        PUBLIC_APPWRITE_COL_THREADS_ID,
+        'main',
+        'threads',
         [
             q ? Query.search('search_meta', q) : undefined
             // tags ? Query.equal('tags', tags) : undefined
@@ -80,10 +79,20 @@ export async function getThreads({ q, tags, allTags }: GetThreadsArgs) {
 
 export async function getThread($id: string) {
     return (await databases.getDocument(
-        PUBLIC_APPWRITE_DB_MAIN_ID,
-        PUBLIC_APPWRITE_COL_THREADS_ID,
+        'main',
+        'threads',
         $id
     )) as unknown as DiscordThread;
+}
+
+export async function getMessages(threadId: string) {
+    return (await databases.listDocuments(
+        'main',
+        'messages',
+        [
+            Query.equal('threadId', threadId)
+        ]
+    )) as unknown as DiscordMessage;
 }
 
 export async function getRelatedThreads(thread: DiscordThread) {

@@ -15,6 +15,7 @@ export interface DiscordMessage extends Pick<Models.Document, '$id'> {
     role: string;
     /* `UTC` timestamp */
     timestamp: string;
+    threadId: string;
 }
 
 export interface DiscordThread extends Pick<Models.Document, '$id'> {
@@ -24,7 +25,6 @@ export interface DiscordThread extends Pick<Models.Document, '$id'> {
     author: string;
     author_avatar: string;
     tags?: string[];
-    messages?: DiscordMessage[];
     seo_description?: string;
     tldr: string;
     vote_count: number;

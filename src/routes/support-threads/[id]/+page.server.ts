@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getRelatedThreads, getThread } from '../helpers.js';
+import { getMessages, getRelatedThreads, getThread } from '../helpers.js';
 import { deterministicRandom, random } from '$lib/utils/random.js';
 
 export const prerender = false;
@@ -27,7 +27,9 @@ export const load = async ({ params, fetch }) => {
 
         const upvotes = random(1, 60);
 
-        return { ...thread, related, tldr, upvotes };
+        const messages = getMessages(thread.$id);
+
+        return { ...thread, messages, related, tldr, upvotes };
     } catch (e) {
         console.log(e);
         throw error(404, 'Thread not found');
